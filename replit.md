@@ -1,10 +1,10 @@
-# [Project name]
+# WorkTracker
 
-_Replace the heading above with the project's name, and this line with one sentence describing what this app does for users._
+A full-stack work time tracking system for teams, with employee portal, live timer, reports, and admin dashboard.
 
 ## Run & Operate
 
-- `pnpm --filter @workspace/api-server run dev` — run the API server (port 5000)
+- `pnpm --filter @workspace/api-server run dev` — run the API server (port 8080)
 - `pnpm run typecheck` — full typecheck across all packages
 - `pnpm run build` — typecheck + build all packages
 - `pnpm --filter @workspace/api-spec run codegen` — regenerate API hooks and Zod schemas from the OpenAPI spec
@@ -14,23 +14,38 @@ _Replace the heading above with the project's name, and this line with one sente
 ## Stack
 
 - pnpm workspaces, Node.js 24, TypeScript 5.9
-- API: Express 5
+- API: Express 5 (port 8080, base path `/api`)
 - DB: PostgreSQL + Drizzle ORM
 - Validation: Zod (`zod/v4`), `drizzle-zod`
-- API codegen: Orval (from OpenAPI spec)
+- API codegen: Orval (from OpenAPI spec in `lib/api-spec`)
+- Frontend: React + Vite + Tailwind + shadcn/ui + Recharts
 - Build: esbuild (CJS bundle)
 
 ## Where things live
 
-_Populate as you build — short repo map plus pointers to the source-of-truth file for DB schema, API contracts, theme files, etc._
+- `lib/db/src/schema.ts` — DB schema (users, work_sessions, login_activity)
+- `lib/api-spec/openapi.yaml` — OpenAPI contract (source of truth for all endpoints)
+- `lib/api-client-react/src/generated/` — generated Orval hooks and Zod schemas (don't edit)
+- `artifacts/api-server/src/` — Express routes, auth middleware, seed script
+- `artifacts/work-tracker/src/` — React frontend
 
 ## Architecture decisions
 
-_Populate as you build — non-obvious choices a reader couldn't infer from the code (3-5 bullets)._
+- JWT auth stored in localStorage under `wt_token`; `setupApi()` in `main.tsx` wires the bearer token getter into Orval's custom fetch
+- Orval hook params are **direct** (not wrapped): `useListSessions({ from, to })` — NOT `useListSessions({ params: { from, to } })`
+- Mutation args use `{ id }` not `{ userId }`: `updateUser.mutate({ id, data })`, `deleteUser.mutate({ id })`
+- All analytics values are in **hours** (not minutes) in AdminStats: `totalHoursThisWeek`, `totalHoursThisMonth`
+- UserUpdate does NOT include `password`; password is only set on user creation via UserCreate
 
 ## Product
 
-_Describe the high-level user-facing capabilities of this app once they exist._
+- **Employee portal**: live session timer (start/stop), today's progress ring, daily/weekly/monthly reports with charts
+- **Admin dashboard**: live user monitoring (working/idle/offline status), team stats, daily reports with CSV export, login activity log, weekly/monthly analytics charts
+
+## Seed credentials
+
+- Admin: `admin@company.com` / `admin123`
+- Employees: `sarah@company.com`, `michael@company.com`, `aisha@company.com` — all use `password123`
 
 ## User preferences
 
@@ -38,7 +53,9 @@ _Populate as you build — explicit user instructions worth remembering across s
 
 ## Gotchas
 
-_Populate as you build — sharp edges, "always run X before Y" rules._
+- Run `pnpm --filter @workspace/api-spec run codegen` after any OpenAPI spec change, then restart the work-tracker workflow
+- Run `pnpm --filter @workspace/db run push` after any schema change before restarting the API server
+- Optional number fields in reports (`overtimeMinutes`, `missingMinutes`, `productivityPercent`, `completionPercent`) require `?? 0` before arithmetic
 
 ## Pointers
 

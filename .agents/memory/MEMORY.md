@@ -1,0 +1,2 @@
+- [Orval hook param patterns](orval-hook-patterns.md) — params are direct (not `{ params: ... }`); mutations use `{ id }` not `{ userId }`.
+- [WorkTracker schema quirks](work-tracker-schema-quirks.md) — AdminStats uses hours (not minutes); optional number fields need `?? 0`; UserUpdate has no password.

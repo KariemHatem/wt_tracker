@@ -3,20 +3,30 @@ info:
   # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: Work Time Tracker API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: auth
+    description: Authentication
+  - name: users
+    description: User management
+  - name: sessions
+    description: Work sessions
+  - name: reports
+    description: Reports and analytics
+  - name: admin
+    description: Admin operations
+
 paths:
   /healthz:
     get:
       operationId: healthCheck
       tags: [health]
       summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
@@ -24,13 +34,793 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  # Auth
+  /auth/login:
+    post:
+      operationId: login
+      tags: [auth]
+      summary: Login with email and password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginInput"
+      responses:
+        "200":
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "401":
+          description: Invalid credentials
+
+  /auth/logout:
+    post:
+      operationId: logout
+      tags: [auth]
+      summary: Logout current user
+      responses:
+        "200":
+          description: Logout successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+
+  /auth/me:
+    get:
+      operationId: getMe
+      tags: [auth]
+      summary: Get current authenticated user
+      responses:
+        "200":
+          description: Current user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "401":
+          description: Unauthorized
+
+  # Users (admin)
+  /users:
+    get:
+      operationId: listUsers
+      tags: [users]
+      summary: List all users (admin only)
+      responses:
+        "200":
+          description: List of users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/User"
+
+    post:
+      operationId: createUser
+      tags: [users]
+      summary: Create a new user (admin only)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserInput"
+      responses:
+        "201":
+          description: Created user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+
+  /users/{id}:
+    get:
+      operationId: getUser
+      tags: [users]
+      summary: Get user by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: User
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "404":
+          description: Not found
+
+    patch:
+      operationId: updateUser
+      tags: [users]
+      summary: Update user
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserUpdate"
+      responses:
+        "200":
+          description: Updated user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+
+    delete:
+      operationId: deleteUser
+      tags: [users]
+      summary: Delete user (admin only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /users/me/profile:
+    patch:
+      operationId: updateMyProfile
+      tags: [users]
+      summary: Update current user profile settings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProfileUpdate"
+      responses:
+        "200":
+          description: Updated profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+
+  # Work Sessions
+  /sessions/start:
+    post:
+      operationId: startSession
+      tags: [sessions]
+      summary: Start a work session
+      responses:
+        "201":
+          description: Session started
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WorkSession"
+        "409":
+          description: Session already active
+
+  /sessions/end:
+    post:
+      operationId: endSession
+      tags: [sessions]
+      summary: End the current active work session
+      responses:
+        "200":
+          description: Session ended
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WorkSession"
+        "404":
+          description: No active session
+
+  /sessions/active:
+    get:
+      operationId: getActiveSession
+      tags: [sessions]
+      summary: Get current user's active session if any
+      responses:
+        "200":
+          description: Active session or null
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ActiveSessionResponse"
+
+  /sessions:
+    get:
+      operationId: listSessions
+      tags: [sessions]
+      summary: List work sessions for current user
+      parameters:
+        - name: from
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: to
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: userId
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Sessions list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/WorkSession"
+
+  # Today's progress
+  /sessions/today:
+    get:
+      operationId: getTodayProgress
+      tags: [sessions]
+      summary: Get today's work progress for current user
+      responses:
+        "200":
+          description: Today's progress
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TodayProgress"
+
+  # Login Activity
+  /activity/login:
+    get:
+      operationId: listLoginActivity
+      tags: [sessions]
+      summary: List login activity (admin or own)
+      parameters:
+        - name: userId
+          in: query
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 50
+      responses:
+        "200":
+          description: Login activity list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/LoginActivity"
+
+  # Reports
+  /reports/daily:
+    get:
+      operationId: getDailyReport
+      tags: [reports]
+      summary: Get daily report
+      parameters:
+        - name: date
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: userId
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Daily report
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/DailyReportRow"
+
+  /reports/weekly:
+    get:
+      operationId: getWeeklyReport
+      tags: [reports]
+      summary: Get weekly report
+      parameters:
+        - name: week
+          in: query
+          schema:
+            type: string
+            format: date
+          description: Any date in the target week (ISO date)
+        - name: userId
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Weekly report
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WeeklyReport"
+
+  /reports/monthly:
+    get:
+      operationId: getMonthlyReport
+      tags: [reports]
+      summary: Get monthly report
+      parameters:
+        - name: year
+          in: query
+          schema:
+            type: integer
+        - name: month
+          in: query
+          schema:
+            type: integer
+        - name: userId
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Monthly report
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MonthlyReport"
+
+  # Admin analytics
+  /admin/stats:
+    get:
+      operationId: getAdminStats
+      tags: [admin]
+      summary: Get admin dashboard stats
+      responses:
+        "200":
+          description: Admin stats
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminStats"
+
+  /admin/users/monitoring:
+    get:
+      operationId: getUsersMonitoring
+      tags: [admin]
+      summary: Get per-user monitoring data for admin
+      responses:
+        "200":
+          description: User monitoring list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/UserMonitoring"
+
+  /admin/analytics/weekly:
+    get:
+      operationId: getWeeklyAnalytics
+      tags: [admin]
+      summary: Get weekly analytics chart data
+      parameters:
+        - name: week
+          in: query
+          schema:
+            type: string
+            format: date
+      responses:
+        "200":
+          description: Weekly analytics
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WeeklyAnalytics"
+
+  /admin/analytics/monthly:
+    get:
+      operationId: getMonthlyAnalytics
+      tags: [admin]
+      summary: Get monthly analytics chart data
+      parameters:
+        - name: year
+          in: query
+          schema:
+            type: integer
+        - name: month
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Monthly analytics
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MonthlyAnalytics"
+
 components:
   schemas:
     HealthStatus:
       type: object
+      required: [status]
       properties:
         status:
           type: string
-      required:
-        - status
 
+    MessageResponse:
+      type: object
+      required: [message]
+      properties:
+        message:
+          type: string
+
+    LoginInput:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+        rememberMe:
+          type: boolean
+
+    AuthResponse:
+      type: object
+      required: [token, user]
+      properties:
+        token:
+          type: string
+        user:
+          $ref: "#/components/schemas/User"
+
+    User:
+      type: object
+      required: [id, fullName, email, targetHoursPerDay, workingDays, isAdmin, isActive, createdAt]
+      properties:
+        id:
+          type: integer
+        fullName:
+          type: string
+        email:
+          type: string
+        targetHoursPerDay:
+          type: number
+        workingDays:
+          type: array
+          items:
+            type: integer
+          description: "Array of weekday numbers: 0=Sun, 1=Mon, ..., 6=Sat"
+        isAdmin:
+          type: boolean
+        isActive:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+
+    UserInput:
+      type: object
+      required: [fullName, email, password]
+      properties:
+        fullName:
+          type: string
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+        targetHoursPerDay:
+          type: number
+        workingDays:
+          type: array
+          items:
+            type: integer
+        isAdmin:
+          type: boolean
+
+    UserUpdate:
+      type: object
+      properties:
+        fullName:
+          type: string
+        email:
+          type: string
+        targetHoursPerDay:
+          type: number
+        workingDays:
+          type: array
+          items:
+            type: integer
+        isActive:
+          type: boolean
+        isAdmin:
+          type: boolean
+
+    ProfileUpdate:
+      type: object
+      properties:
+        fullName:
+          type: string
+        targetHoursPerDay:
+          type: number
+        workingDays:
+          type: array
+          items:
+            type: integer
+        password:
+          type: string
+
+    WorkSession:
+      type: object
+      required: [id, userId, startTime, date]
+      properties:
+        id:
+          type: integer
+        userId:
+          type: integer
+        startTime:
+          type: string
+          format: date-time
+        endTime:
+          type: ["string", "null"]
+          format: date-time
+        totalMinutes:
+          type: ["integer", "null"]
+        date:
+          type: string
+          format: date
+
+    ActiveSessionResponse:
+      type: object
+      required: [session]
+      properties:
+        session:
+          oneOf:
+            - $ref: "#/components/schemas/WorkSession"
+            - type: "null"
+
+    TodayProgress:
+      type: object
+      required: [workedMinutes, targetMinutes, remainingMinutes, progressPercent, isComplete, sessionStartTime]
+      properties:
+        workedMinutes:
+          type: integer
+        targetMinutes:
+          type: integer
+        remainingMinutes:
+          type: integer
+        progressPercent:
+          type: number
+        isComplete:
+          type: boolean
+        sessionStartTime:
+          type: ["string", "null"]
+          format: date-time
+
+    LoginActivity:
+      type: object
+      required: [id, userId, loginTime]
+      properties:
+        id:
+          type: integer
+        userId:
+          type: integer
+        userFullName:
+          type: string
+        userEmail:
+          type: string
+        loginTime:
+          type: string
+          format: date-time
+        logoutTime:
+          type: ["string", "null"]
+          format: date-time
+        ipAddress:
+          type: ["string", "null"]
+        browser:
+          type: ["string", "null"]
+        operatingSystem:
+          type: ["string", "null"]
+        device:
+          type: ["string", "null"]
+
+    DailyReportRow:
+      type: object
+      required: [userId, userFullName, date, workedMinutes, targetMinutes]
+      properties:
+        userId:
+          type: integer
+        userFullName:
+          type: string
+        date:
+          type: string
+          format: date
+        startTime:
+          type: ["string", "null"]
+          format: date-time
+        endTime:
+          type: ["string", "null"]
+          format: date-time
+        workedMinutes:
+          type: integer
+        targetMinutes:
+          type: integer
+        completionPercent:
+          type: number
+
+    WeeklyReport:
+      type: object
+      required: [weekStart, weekEnd, totalWorkedMinutes, totalTargetMinutes, dailyBreakdown]
+      properties:
+        weekStart:
+          type: string
+          format: date
+        weekEnd:
+          type: string
+          format: date
+        totalWorkedMinutes:
+          type: integer
+        totalTargetMinutes:
+          type: integer
+        missingMinutes:
+          type: integer
+        overtimeMinutes:
+          type: integer
+        dailyBreakdown:
+          type: array
+          items:
+            $ref: "#/components/schemas/DailyBreakdown"
+
+    DailyBreakdown:
+      type: object
+      required: [date, dayName, workedMinutes, targetMinutes]
+      properties:
+        date:
+          type: string
+          format: date
+        dayName:
+          type: string
+        workedMinutes:
+          type: integer
+        targetMinutes:
+          type: integer
+
+    MonthlyReport:
+      type: object
+      required: [year, month, totalWorkedMinutes, totalTargetMinutes, weeklyBreakdown]
+      properties:
+        year:
+          type: integer
+        month:
+          type: integer
+        totalWorkedMinutes:
+          type: integer
+        totalTargetMinutes:
+          type: integer
+        overtimeMinutes:
+          type: integer
+        productivityPercent:
+          type: number
+        weeklyBreakdown:
+          type: array
+          items:
+            $ref: "#/components/schemas/WeeklyBreakdown"
+
+    WeeklyBreakdown:
+      type: object
+      required: [weekNumber, workedMinutes, targetMinutes]
+      properties:
+        weekNumber:
+          type: integer
+        workedMinutes:
+          type: integer
+        targetMinutes:
+          type: integer
+
+    AdminStats:
+      type: object
+      required: [totalUsers, activeUsersToday, totalHoursThisWeek, totalHoursThisMonth, totalLogins, avgDailyProductivity]
+      properties:
+        totalUsers:
+          type: integer
+        activeUsersToday:
+          type: integer
+        totalHoursThisWeek:
+          type: number
+        totalHoursThisMonth:
+          type: number
+        totalLogins:
+          type: integer
+        avgDailyProductivity:
+          type: number
+
+    UserMonitoring:
+      type: object
+      required: [userId, fullName, email, isActive, hoursToday, hoursThisWeek]
+      properties:
+        userId:
+          type: integer
+        fullName:
+          type: string
+        email:
+          type: string
+        isActive:
+          type: boolean
+        status:
+          type: string
+          enum: [working, idle, offline]
+        hoursToday:
+          type: number
+        hoursThisWeek:
+          type: number
+        lastLogin:
+          type: ["string", "null"]
+          format: date-time
+
+    WeeklyAnalytics:
+      type: object
+      required: [weekStart, days]
+      properties:
+        weekStart:
+          type: string
+          format: date
+        days:
+          type: array
+          items:
+            $ref: "#/components/schemas/DayAnalytics"
+
+    DayAnalytics:
+      type: object
+      required: [date, dayName, workedMinutes, targetMinutes, productivityPercent]
+      properties:
+        date:
+          type: string
+          format: date
+        dayName:
+          type: string
+        workedMinutes:
+          type: integer
+        targetMinutes:
+          type: integer
+        productivityPercent:
+          type: number
+
+    MonthlyAnalytics:
+      type: object
+      required: [year, month, weeks, mostProductiveDays]
+      properties:
+        year:
+          type: integer
+        month:
+          type: integer
+        weeks:
+          type: array
+          items:
+            $ref: "#/components/schemas/WeeklyBreakdown"
+        mostProductiveDays:
+          type: array
+          items:
+            type: string
+        avgHoursWorked:
+          type: number

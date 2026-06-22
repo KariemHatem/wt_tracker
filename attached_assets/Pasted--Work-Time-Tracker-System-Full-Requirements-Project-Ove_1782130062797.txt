@@ -1,0 +1,444 @@
+# Work Time Tracker System - Full Requirements
+
+## Project Overview
+
+Build a modern, professional, responsive Work Time Tracking System using:
+
+* Angular (latest version)
+* PrimeNG
+* Bootstrap
+* SCSS
+* Responsive Design
+* Modern Futuristic UI/UX
+* REST API
+* Database Integration
+
+The application should contain:
+
+1. Employee/User Portal
+2. Admin Dashboard
+3. Authentication System
+4. Reports & Analytics
+5. Time Tracking Engine
+
+---
+
+# Authentication
+
+## User Login
+
+Users must log in using:
+
+* Email
+* Password
+
+Features:
+
+* Secure authentication
+* JWT token-based authentication
+* Remember Me option
+* Logout functionality
+
+## Admin Login
+
+Only one admin account should have access to the dashboard.
+
+Admin credentials should be configurable from the database or environment variables.
+
+Admin permissions:
+
+* View all users
+* View all tracked hours
+* View reports
+* View login activity
+* View analytics
+* Manage users
+
+Regular users cannot access the admin dashboard.
+
+---
+
+# User Management
+
+Each user should have:
+
+* Full Name
+* Email
+* Password
+* Working Days Configuration
+* Daily Working Hours Configuration
+* Account Status
+
+Default values:
+
+* Daily working hours = 8 hours
+* Working week = Sunday to Thursday
+
+Business Rules:
+
+* Friday and Saturday are NOT counted as working days by default.
+* Users can customize their working days.
+* Users can customize their daily target hours.
+* If the user does not configure anything, use:
+
+  * Sunday–Thursday
+  * 8 hours/day
+
+---
+
+# Time Tracking System
+
+## Start Work
+
+User clicks:
+
+"Start Work"
+
+System should:
+
+* Store start timestamp
+* Start live timer
+* Show elapsed time
+* Continue counting even if page refreshes
+* Continue counting after browser restart
+
+## End Work
+
+User clicks:
+
+"End Work"
+
+System should:
+
+* Store end timestamp
+* Calculate worked duration
+* Save duration in database
+
+---
+
+# Daily Progress
+
+Display:
+
+* Hours worked today
+* Remaining hours
+* Target hours
+* Progress percentage
+
+Examples:
+
+Worked: 5h 30m
+Target: 8h
+Remaining: 2h 30m
+
+Progress Bar should update in real-time.
+
+---
+
+# Dashboard Home
+
+Display cards:
+
+* Total Users
+* Active Users Today
+* Total Hours This Week
+* Total Hours This Month
+* Total Logins
+* Average Daily Productivity
+
+Include charts and visual analytics.
+
+---
+
+# Login Tracking
+
+System must store every login attempt.
+
+Track:
+
+* User ID
+* User Name
+* Email
+* Login Time
+* Logout Time
+* IP Address
+* Browser
+* Device
+* Operating System
+
+Admin can see:
+
+* Who logged in
+* When they logged in
+* Last activity
+* Session duration
+
+---
+
+# Reports
+
+## Daily Report
+
+Show:
+
+* Date
+* User
+* Start Time
+* End Time
+* Worked Hours
+* Target Hours
+* Completion %
+
+---
+
+## Weekly Report
+
+Show:
+
+* Total hours worked
+* Expected hours
+* Missing hours
+* Overtime hours
+
+Charts:
+
+* Bar Chart
+* Line Chart
+
+---
+
+## Monthly Report
+
+Show:
+
+* Total worked hours
+* Expected hours
+* Overtime
+* Productivity %
+
+Charts:
+
+* Monthly trends
+* Performance comparisons
+
+---
+
+# Analytics & Visualization
+
+Use PrimeNG Charts.
+
+Create:
+
+## Daily Analytics
+
+* Worked vs Target Hours
+* Completion %
+
+## Weekly Analytics
+
+* Hours per Day
+* Productivity Trend
+
+## Monthly Analytics
+
+* Total Hours by Week
+* Attendance Analysis
+
+## Overall Analytics
+
+* Most Productive Days
+* Average Hours Worked
+* Weekly Comparison
+* Monthly Comparison
+
+---
+
+# User Dashboard
+
+Display:
+
+* Welcome Section
+* Current Status
+* Today's Progress
+* Current Running Timer
+* Weekly Summary
+* Monthly Summary
+* Recent Activities
+
+---
+
+# Admin Dashboard
+
+Display:
+
+## Overview
+
+* Users Count
+* Active Sessions
+* Hours Today
+* Hours This Week
+* Hours This Month
+
+## User Monitoring
+
+Table:
+
+* User
+* Status
+* Hours Today
+* Hours This Week
+* Last Login
+
+## Login Activity
+
+Table:
+
+* User
+* Login Time
+* Logout Time
+* Device
+* Browser
+* IP
+
+## Reports
+
+* Daily Reports
+* Weekly Reports
+* Monthly Reports
+
+Export:
+
+* Excel
+* CSV
+* PDF
+
+---
+
+# Notifications
+
+Show alerts for:
+
+* Daily target achieved
+* Overtime reached
+* Missing work hours
+* Inactive sessions
+
+---
+
+# Responsive Design
+
+Must work perfectly on:
+
+* Desktop
+* Tablet
+* Mobile
+
+Use:
+
+* PrimeNG Components
+* Bootstrap Grid
+* SCSS
+
+---
+
+# UI/UX Requirements
+
+Create a modern futuristic dashboard inspired by:
+
+* Linear
+* Vercel
+* Notion
+* Stripe Dashboard
+
+Design Guidelines:
+
+* Glassmorphism effects
+* Modern cards
+* Soft shadows
+* Smooth animations
+* Dark mode
+* Light mode
+* Clean typography
+* Professional enterprise look
+
+---
+
+# Database Design
+
+Users Table
+
+* id
+* fullName
+* email
+* passwordHash
+* targetHoursPerDay
+* workingDays
+* createdAt
+
+Work Sessions Table
+
+* id
+* userId
+* startTime
+* endTime
+* totalMinutes
+* date
+
+Login Activity Table
+
+* id
+* userId
+* loginTime
+* logoutTime
+* ipAddress
+* browser
+* operatingSystem
+* device
+
+Settings Table
+
+* id
+* key
+* value
+
+---
+
+# Technical Requirements
+
+Frontend:
+
+* Angular
+* PrimeNG
+* Bootstrap
+* SCSS
+* RxJS
+
+Backend:
+
+* Node.js
+* Express.js
+
+Database:
+
+* PostgreSQL
+
+Authentication:
+
+* JWT
+
+Deployment:
+
+* Replit
+
+Code Requirements:
+
+* Clean Architecture
+* Reusable Components
+* Lazy Loading
+* Route Guards
+* Interceptors
+* Error Handling
+* Responsive Layout
+* Production Ready
+
+Generate complete frontend, backend, database schema, API endpoints, authentication flow, dashboard pages, charts, reports, and responsive UI implementation.
