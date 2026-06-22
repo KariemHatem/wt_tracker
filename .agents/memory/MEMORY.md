@@ -1,2 +1,2 @@
-- [Orval hook param patterns](orval-hook-patterns.md) — params are direct (not `{ params: ... }`); mutations use `{ id }` not `{ userId }`.
-- [WorkTracker schema quirks](work-tracker-schema-quirks.md) — AdminStats uses hours (not minutes); optional number fields need `?? 0`; UserUpdate has no password.
+- [Angular 17 template @ symbol](angular-template-at.md) — Literal `@` in Angular 17 template HTML text must be escaped as `&#64;` (e.g. in email addresses) since `@` starts control flow blocks.
+- [Angular CLI analytics prompt](angular-cli-analytics.md) — Angular CLI prompts for analytics consent on first run, blocking the process. Fix: set `NG_CLI_ANALYTICS=false` env prefix in dev script and create `.angular/config.json` with `"analytics": false`.

@@ -1,0 +1,211 @@
+// ── PrimeNG lara-dark-blue variable overrides → navy palette ──────────────────
+:root {
+  --surface-ground:    #07101f;
+  --surface-section:   #0c1528;
+  --surface-card:      #111d33;
+  --surface-overlay:   #172039;
+  --surface-border:    rgba(148, 163, 184, 0.12);
+  --surface-hover:     rgba(255, 255, 255, 0.04);
+  --text-color:        #f1f5f9;
+  --text-color-secondary: #94a3b8;
+  --primary-color:     #3b82f6;
+  --primary-color-text:#ffffff;
+
+  // sidebar
+  --sidebar-w: 240px;
+  --sidebar-bg: #0c1528;
+  --sidebar-border: rgba(148, 163, 184, 0.10);
+  --sidebar-link:    rgba(255,255,255,0.55);
+  --sidebar-link-hover: #f1f5f9;
+  --sidebar-link-active-bg: rgba(59,130,246,0.15);
+  --sidebar-link-active-color: #60a5fa;
+  --sidebar-section: rgba(255,255,255,0.30);
+
+  // cards
+  --card-border: rgba(148, 163, 184, 0.12);
+  --card-bg: #111d33;
+}
+
+// ── Global ─────────────────────────────────────────────────────────────────────
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; height: 100%; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+body { background: var(--surface-ground); color: var(--text-color); }
+
+// ── Layout ─────────────────────────────────────────────────────────────────────
+.wt-shell    { display: flex; height: 100vh; overflow: hidden; }
+
+.wt-sidebar {
+  width: var(--sidebar-w);
+  background: var(--sidebar-bg);
+  border-right: 1px solid var(--sidebar-border);
+  display: flex; flex-direction: column;
+  height: 100vh; overflow-y: auto; flex-shrink: 0;
+
+  &__logo {
+    display: flex; align-items: center; gap: 10px;
+    padding: 20px 18px 14px;
+    font-weight: 700; font-size: 16px; color: var(--text-color);
+    border-bottom: 1px solid var(--sidebar-border);
+    i { font-size: 22px; color: var(--primary-color); }
+  }
+
+  &__nav { flex: 1; padding: 10px 8px; }
+
+  &__section-label {
+    font-size: 10px; font-weight: 600; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--sidebar-section);
+    padding: 14px 10px 4px;
+  }
+
+  &__link {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 10px; border-radius: 8px;
+    font-size: 14px; font-weight: 500; color: var(--sidebar-link);
+    text-decoration: none; margin-bottom: 2px;
+    cursor: pointer; transition: all .15s;
+    i { font-size: 15px; width: 18px; text-align: center; }
+    &:hover { color: var(--sidebar-link-hover); background: var(--surface-hover); }
+    &.active { color: var(--sidebar-link-active-color); background: var(--sidebar-link-active-bg); }
+  }
+
+  &__footer {
+    padding: 12px 8px; border-top: 1px solid var(--sidebar-border);
+    .user-info { display: flex; align-items: center; gap: 10px; padding: 8px 10px; }
+    .avatar {
+      width: 34px; height: 34px; border-radius: 50%;
+      background: rgba(59,130,246,.2); color: var(--primary-color);
+      font-size: 13px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .user-name  { font-size: 13px; font-weight: 600; color: var(--text-color); }
+    .user-email { font-size: 11px; color: var(--text-color-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 140px; }
+    .logout-btn {
+      width: 100%; display: flex; align-items: center; gap: 8px;
+      padding: 8px 10px; border-radius: 8px;
+      font-size: 13px; color: var(--text-color-secondary); cursor: pointer;
+      border: none; background: none;
+      transition: all .15s;
+      &:hover { color: #ef4444; background: rgba(239,68,68,.08); }
+      i { font-size: 14px; }
+    }
+  }
+}
+
+.wt-content  { flex: 1; overflow-y: auto; background: var(--surface-ground); }
+
+// ── Utility cards ──────────────────────────────────────────────────────────────
+.wt-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 14px;
+  padding: 20px;
+}
+.wt-stat-card {
+  @extend .wt-card;
+  .stat-icon { font-size: 20px; margin-bottom: 12px; }
+  .stat-value { font-size: 26px; font-weight: 700; color: var(--text-color); }
+  .stat-label { font-size: 12px; color: var(--text-color-secondary); margin-top: 4px; }
+}
+.wt-section-title {
+  font-size: 18px; font-weight: 700; color: var(--text-color); margin: 0 0 4px;
+}
+.wt-section-sub {
+  font-size: 13px; color: var(--text-color-secondary);
+}
+
+// ── PrimeNG overrides ──────────────────────────────────────────────────────────
+.p-datatable {
+  .p-datatable-thead > tr > th {
+    background: rgba(255,255,255,.03) !important;
+    border-color: var(--card-border) !important;
+    color: var(--text-color-secondary) !important;
+    font-size: 11px; text-transform: uppercase; letter-spacing: .06em;
+  }
+  .p-datatable-tbody > tr {
+    background: transparent !important;
+    border-bottom: 1px solid var(--card-border) !important;
+    &:hover > td { background: var(--surface-hover) !important; }
+  }
+  .p-datatable-tbody > tr > td {
+    border: none !important;
+    color: var(--text-color) !important;
+  }
+  .p-paginator { background: transparent; border: none; border-top: 1px solid var(--card-border); }
+}
+
+.p-dialog {
+  .p-dialog-header { background: var(--surface-card); border-bottom: 1px solid var(--card-border); }
+  .p-dialog-content { background: var(--surface-card); }
+  .p-dialog-footer  { background: var(--surface-card); border-top: 1px solid var(--card-border); }
+}
+
+.p-inputtext, .p-password input {
+  background: var(--surface-ground) !important;
+  border-color: var(--card-border) !important;
+  color: var(--text-color) !important;
+  &:focus { border-color: var(--primary-color) !important; }
+}
+
+.p-calendar .p-inputtext { background: var(--surface-ground) !important; }
+
+.p-tabview {
+  .p-tabview-nav { background: transparent; border-color: var(--card-border); }
+  .p-tabview-nav li .p-tabview-nav-link { background: transparent; border: none; color: var(--text-color-secondary); font-weight: 500; }
+  .p-tabview-nav li.p-highlight .p-tabview-nav-link { color: var(--primary-color); border-bottom-color: var(--primary-color) !important; background: transparent; }
+  .p-tabview-panels { background: transparent; padding: 20px 0 0; border: none; }
+}
+
+.p-progressbar { height: 8px; border-radius: 4px; background: rgba(255,255,255,.08); }
+
+.p-tag { font-size: 11px; font-weight: 600; }
+
+.p-button.p-button-sm { font-size: 13px; }
+
+// ── Login page ─────────────────────────────────────────────────────────────────
+.login-page {
+  min-height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--surface-ground);
+
+  .login-card {
+    @extend .wt-card;
+    width: 100%; max-width: 420px;
+    padding: 36px 32px;
+  }
+  .login-logo {
+    text-align: center; margin-bottom: 28px;
+    i { font-size: 36px; color: var(--primary-color); display: block; margin-bottom: 10px; }
+    h1 { font-size: 22px; font-weight: 700; margin: 0 0 4px; }
+    p  { font-size: 13px; color: var(--text-color-secondary); margin: 0; }
+  }
+  .field { margin-bottom: 18px; label { font-size: 13px; font-weight: 500; color: var(--text-color-secondary); display: block; margin-bottom: 6px; } }
+  .login-footer { margin-top: 16px; font-size: 12px; color: var(--text-color-secondary); text-align: center; code { color: #60a5fa; } }
+}
+
+// ── Dashboard ──────────────────────────────────────────────────────────────────
+.timer-display {
+  font-size: 48px; font-weight: 700; letter-spacing: .04em;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-color); text-align: center;
+  margin: 8px 0;
+}
+.timer-running { color: #22c55e !important; }
+
+.progress-ring-wrap { display: flex; align-items: center; gap: 20px; }
+.progress-ring-label { font-size: 13px; color: var(--text-color-secondary); }
+
+// ── Status badges ──────────────────────────────────────────────────────────────
+.badge-working { background: rgba(34,197,94,.15); color: #22c55e; padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+.badge-idle    { background: rgba(234,179,8,.15);  color: #eab308; padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+.badge-offline { background: rgba(100,116,139,.12); color: #94a3b8; padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+
+// ── Misc ───────────────────────────────────────────────────────────────────────
+.text-muted  { color: var(--text-color-secondary) !important; }
+.text-primary-color { color: var(--primary-color) !important; }
+.text-success { color: #22c55e !important; }
+.text-warning { color: #f59e0b !important; }
+.text-danger  { color: #ef4444 !important; }
+.font-mono   { font-family: ui-monospace, 'Cascadia Code', monospace; }
+.page-header { padding: 24px 28px 0; margin-bottom: 24px; }
+.page-body   { padding: 0 28px 28px; }
+.divider     { border: none; border-top: 1px solid var(--card-border); margin: 16px 0; }
