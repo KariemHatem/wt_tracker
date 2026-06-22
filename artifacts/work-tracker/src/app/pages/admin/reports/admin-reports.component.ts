@@ -3,7 +3,7 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { TableModule } from 'primeng/table';
-import { CalendarModule } from 'primeng/calendar';
+import { DatePickerModule } from 'primeng/datepicker';
 import { ButtonModule } from 'primeng/button';
 import { ApiService } from '../../../services/api.service';
 import { DailyReportRow } from '../../../models/api.models';
@@ -11,7 +11,7 @@ import { DailyReportRow } from '../../../models/api.models';
 @Component({
   selector: 'app-admin-reports',
   standalone: true,
-  imports: [CommonModule, DatePipe, FormsModule, TableModule, CalendarModule, ButtonModule],
+  imports: [CommonModule, DatePipe, FormsModule, TableModule, DatePickerModule, ButtonModule],
   template: `
     <div class="page-header">
       <h1 class="wt-section-title">Admin Reports</h1>
@@ -22,7 +22,7 @@ import { DailyReportRow } from '../../../models/api.models';
         <div class="d-flex align-items-center gap-3 flex-wrap">
           <div>
             <label class="text-muted d-block mb-1" style="font-size:12px">Date</label>
-            <p-calendar [(ngModel)]="selectedDate" dateFormat="yy-mm-dd" [showIcon]="true"
+            <p-datepicker [(ngModel)]="selectedDate" dateFormat="yy-mm-dd" [showIcon]="true"
                         (ngModelChange)="load()" />
           </div>
           <div class="ms-auto d-flex align-items-center gap-3">

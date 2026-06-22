@@ -3,7 +3,7 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { TableModule } from 'primeng/table';
-import { CalendarModule } from 'primeng/calendar';
+import { DatePickerModule } from 'primeng/datepicker';
 import { ButtonModule } from 'primeng/button';
 import { TagModule } from 'primeng/tag';
 import { ApiService } from '../../services/api.service';
@@ -12,7 +12,7 @@ import { WorkSession } from '../../models/api.models';
 @Component({
   selector: 'app-sessions',
   standalone: true,
-  imports: [CommonModule, DatePipe, FormsModule, TableModule, CalendarModule, ButtonModule, TagModule],
+  imports: [CommonModule, DatePipe, FormsModule, TableModule, DatePickerModule, ButtonModule, TagModule],
   template: `
     <div class="page-header">
       <h1 class="wt-section-title">Sessions</h1>
@@ -24,13 +24,13 @@ import { WorkSession } from '../../models/api.models';
         <div class="row g-3 align-items-end">
           <div class="col-auto">
             <label class="d-block text-muted mb-1" style="font-size:12px;font-weight:500">From</label>
-            <p-calendar [(ngModel)]="fromDate" dateFormat="yy-mm-dd" [showIcon]="true"
-                        inputStyleClass="form-control-sm" (ngModelChange)="load()" />
+            <p-datepicker [(ngModel)]="fromDate" dateFormat="yy-mm-dd" [showIcon]="true"
+                        (ngModelChange)="load()" />
           </div>
           <div class="col-auto">
             <label class="d-block text-muted mb-1" style="font-size:12px;font-weight:500">To</label>
-            <p-calendar [(ngModel)]="toDate" dateFormat="yy-mm-dd" [showIcon]="true"
-                        inputStyleClass="form-control-sm" (ngModelChange)="load()" />
+            <p-datepicker [(ngModel)]="toDate" dateFormat="yy-mm-dd" [showIcon]="true"
+                        (ngModelChange)="load()" />
           </div>
           <div class="col-auto">
             <p-button icon="pi pi-refresh" severity="secondary" (click)="load()" />

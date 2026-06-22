@@ -88,13 +88,13 @@ export class ApiService {
   getWeeklyAnalytics(week?: string): Observable<WeeklyAnalytics> {
     let params = new HttpParams();
     if (week) params = params.set('week', week);
-    return this.http.get<WeeklyAnalytics>('/api/analytics/weekly', { params });
+    return this.http.get<WeeklyAnalytics>('/api/admin/analytics/weekly', { params });
   }
 
   getMonthlyAnalytics(year?: number, month?: number): Observable<MonthlyAnalytics> {
     let params = new HttpParams();
     if (year)  params = params.set('year', year);
     if (month) params = params.set('month', month);
-    return this.http.get<MonthlyAnalytics>('/api/analytics/monthly', { params });
+    return this.http.get<MonthlyAnalytics>('/api/admin/analytics/monthly', { params });
   }
 }

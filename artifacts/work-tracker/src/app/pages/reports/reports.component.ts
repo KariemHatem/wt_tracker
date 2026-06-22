@@ -2,8 +2,8 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
-import { TabViewModule } from 'primeng/tabview';
-import { CalendarModule } from 'primeng/calendar';
+import { TabsModule } from 'primeng/tabs';
+import { DatePickerModule } from 'primeng/datepicker';
 import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
 import { ChartModule } from 'primeng/chart';
@@ -22,7 +22,7 @@ const CHART_OPTS = {
 @Component({
   selector: 'app-reports',
   standalone: true,
-  imports: [CommonModule, DatePipe, FormsModule, TabViewModule, CalendarModule, ButtonModule, TableModule, ChartModule],
+  imports: [CommonModule, DatePipe, FormsModule, TabsModule, DatePickerModule, ButtonModule, TableModule, ChartModule],
   template: `
     <div class="page-header d-flex align-items-start justify-content-between">
       <div>
@@ -31,87 +31,94 @@ const CHART_OPTS = {
       </div>
     </div>
     <div class="page-body">
-      <p-tabView>
-        <!-- DAILY -->
-        <p-tabPanel header="Daily">
-          <div class="d-flex align-items-center gap-3 mb-4 flex-wrap">
-            <div>
-              <label class="d-block text-muted mb-1" style="font-size:12px">Date</label>
-              <p-calendar [(ngModel)]="dailyDate" dateFormat="yy-mm-dd" [showIcon]="true"
-                          (ngModelChange)="loadDaily()" />
+      <p-tabs [value]="0">
+        <p-tablist>
+          <p-tab [value]="0">Daily</p-tab>
+          <p-tab [value]="1">Weekly</p-tab>
+          <p-tab [value]="2">Monthly</p-tab>
+        </p-tablist>
+        <p-tabpanels>
+          <!-- DAILY -->
+          <p-tabpanel [value]="0">
+            <div class="d-flex align-items-center gap-3 mb-4 flex-wrap" style="padding-top:16px">
+              <div>
+                <label class="d-block text-muted mb-1" style="font-size:12px">Date</label>
+                <p-datepicker [(ngModel)]="dailyDate" dateFormat="yy-mm-dd" [showIcon]="true"
+                            (ngModelChange)="loadDaily()" />
+              </div>
+              <p-button icon="pi pi-download" label="Export CSV" severity="secondary"
+                        size="small" (click)="exportDaily()" [disabled]="!dailyRows.length" />
             </div>
-            <p-button icon="pi pi-download" label="Export CSV" severity="secondary"
-                      size="small" (click)="exportDaily()" [disabled]="!dailyRows.length" />
-          </div>
-          <div class="wt-card">
-            <p-table [value]="dailyRows" [loading]="loadingDaily" responsiveLayout="scroll">
-              <ng-template pTemplate="header">
-                <tr><th>Employee</th><th>Start</th><th>End</th><th>Worked</th><th>Target</th><th>Completion</th></tr>
-              </ng-template>
-              <ng-template pTemplate="body" let-r>
-                <tr>
-                  <td><strong>{{ r.userFullName }}</strong></td>
-                  <td class="font-mono">{{ r.startTime ? (r.startTime | date:'HH:mm') : '—' }}</td>
-                  <td class="font-mono">{{ r.endTime   ? (r.endTime   | date:'HH:mm') : '—' }}</td>
-                  <td><strong>{{ fmtMins(r.workedMinutes) }}</strong></td>
-                  <td class="text-muted">{{ fmtMins(r.targetMinutes) }}</td>
-                  <td>
-                    <div class="d-flex align-items-center gap-2">
-                      <div style="width:60px;height:5px;background:rgba(255,255,255,.08);border-radius:3px">
-                        <div style="height:100%;background:#3b82f6;border-radius:3px"
-                             [style.width.%]="Math.min(100, r.completionPercent ?? 0)"></div>
+            <div class="wt-card">
+              <p-table [value]="dailyRows" [loading]="loadingDaily" responsiveLayout="scroll">
+                <ng-template pTemplate="header">
+                  <tr><th>Employee</th><th>Start</th><th>End</th><th>Worked</th><th>Target</th><th>Completion</th></tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-r>
+                  <tr>
+                    <td><strong>{{ r.userFullName }}</strong></td>
+                    <td class="font-mono">{{ r.startTime ? (r.startTime | date:'HH:mm') : '—' }}</td>
+                    <td class="font-mono">{{ r.endTime   ? (r.endTime   | date:'HH:mm') : '—' }}</td>
+                    <td><strong>{{ fmtMins(r.workedMinutes) }}</strong></td>
+                    <td class="text-muted">{{ fmtMins(r.targetMinutes) }}</td>
+                    <td>
+                      <div class="d-flex align-items-center gap-2">
+                        <div style="width:60px;height:5px;background:rgba(255,255,255,.08);border-radius:3px">
+                          <div style="height:100%;background:#3b82f6;border-radius:3px"
+                               [style.width.%]="Math.min(100, r.completionPercent ?? 0)"></div>
+                        </div>
+                        <span style="font-size:12px;font-weight:600">{{ (r.completionPercent ?? 0).toFixed(0) }}%</span>
                       </div>
-                      <span style="font-size:12px;font-weight:600">{{ (r.completionPercent ?? 0).toFixed(0) }}%</span>
-                    </div>
-                  </td>
-                </tr>
-              </ng-template>
-              <ng-template pTemplate="emptymessage">
-                <tr><td colspan="6" style="text-align:center;padding:40px;color:var(--text-color-secondary)">No data for this date.</td></tr>
-              </ng-template>
-            </p-table>
-          </div>
-        </p-tabPanel>
-
-        <!-- WEEKLY -->
-        <p-tabPanel header="Weekly">
-          <div class="d-flex align-items-center gap-3 mb-4">
-            <div>
-              <label class="d-block text-muted mb-1" style="font-size:12px">Week starting</label>
-              <p-calendar [(ngModel)]="weekDate" dateFormat="yy-mm-dd" [showIcon]="true"
-                          (ngModelChange)="loadWeekly()" />
+                    </td>
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                  <tr><td colspan="6" style="text-align:center;padding:40px;color:var(--text-color-secondary)">No data for this date.</td></tr>
+                </ng-template>
+              </p-table>
             </div>
-          </div>
-          <div *ngIf="weekly" class="row g-3 mb-4">
-            <div class="col-6 col-md-3" *ngFor="let s of weeklySummary">
-              <div class="wt-card text-center">
-                <div style="font-size:20px;font-weight:700" [style.color]="s.color">{{ s.val }}</div>
-                <div class="text-muted" style="font-size:12px;margin-top:4px">{{ s.label }}</div>
+          </p-tabpanel>
+
+          <!-- WEEKLY -->
+          <p-tabpanel [value]="1">
+            <div class="d-flex align-items-center gap-3 mb-4" style="padding-top:16px">
+              <div>
+                <label class="d-block text-muted mb-1" style="font-size:12px">Week starting</label>
+                <p-datepicker [(ngModel)]="weekDate" dateFormat="yy-mm-dd" [showIcon]="true"
+                            (ngModelChange)="loadWeekly()" />
               </div>
             </div>
-          </div>
-          <div class="wt-card" *ngIf="weeklyChartData">
-            <h6 style="font-size:13px;font-weight:600;margin-bottom:16px">Hours per Day</h6>
-            <p-chart type="bar" [data]="weeklyChartData" [options]="chartOpts" height="220" />
-          </div>
-        </p-tabPanel>
-
-        <!-- MONTHLY -->
-        <p-tabPanel header="Monthly">
-          <div *ngIf="monthly" class="row g-3 mb-4">
-            <div class="col-6 col-md-3" *ngFor="let s of monthlySummary">
-              <div class="wt-card text-center">
-                <div style="font-size:20px;font-weight:700" [style.color]="s.color">{{ s.val }}</div>
-                <div class="text-muted" style="font-size:12px;margin-top:4px">{{ s.label }}</div>
+            <div *ngIf="weekly" class="row g-3 mb-4">
+              <div class="col-6 col-md-3" *ngFor="let s of weeklySummary">
+                <div class="wt-card text-center">
+                  <div style="font-size:20px;font-weight:700" [style.color]="s.color">{{ s.val }}</div>
+                  <div class="text-muted" style="font-size:12px;margin-top:4px">{{ s.label }}</div>
+                </div>
               </div>
             </div>
-          </div>
-          <div class="wt-card" *ngIf="monthlyChartData">
-            <h6 style="font-size:13px;font-weight:600;margin-bottom:16px">Hours by Week</h6>
-            <p-chart type="bar" [data]="monthlyChartData" [options]="chartOpts" height="220" />
-          </div>
-        </p-tabPanel>
-      </p-tabView>
+            <div class="wt-card" *ngIf="weeklyChartData">
+              <h6 style="font-size:13px;font-weight:600;margin-bottom:16px">Hours per Day</h6>
+              <p-chart type="bar" [data]="weeklyChartData" [options]="chartOpts" height="220" />
+            </div>
+          </p-tabpanel>
+
+          <!-- MONTHLY -->
+          <p-tabpanel [value]="2">
+            <div *ngIf="monthly" class="row g-3 mb-4" style="padding-top:16px">
+              <div class="col-6 col-md-3" *ngFor="let s of monthlySummary">
+                <div class="wt-card text-center">
+                  <div style="font-size:20px;font-weight:700" [style.color]="s.color">{{ s.val }}</div>
+                  <div class="text-muted" style="font-size:12px;margin-top:4px">{{ s.label }}</div>
+                </div>
+              </div>
+            </div>
+            <div class="wt-card" *ngIf="monthlyChartData">
+              <h6 style="font-size:13px;font-weight:600;margin-bottom:16px">Hours by Week</h6>
+              <p-chart type="bar" [data]="monthlyChartData" [options]="chartOpts" height="220" />
+            </div>
+          </p-tabpanel>
+        </p-tabpanels>
+      </p-tabs>
     </div>
   `,
 })

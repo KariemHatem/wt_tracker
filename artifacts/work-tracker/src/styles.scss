@@ -146,13 +146,13 @@ body { background: var(--surface-ground); color: var(--text-color); }
   &:focus { border-color: var(--primary-color) !important; }
 }
 
-.p-calendar .p-inputtext { background: var(--surface-ground) !important; }
+.p-datepicker input { background: var(--surface-ground) !important; }
 
-.p-tabview {
-  .p-tabview-nav { background: transparent; border-color: var(--card-border); }
-  .p-tabview-nav li .p-tabview-nav-link { background: transparent; border: none; color: var(--text-color-secondary); font-weight: 500; }
-  .p-tabview-nav li.p-highlight .p-tabview-nav-link { color: var(--primary-color); border-bottom-color: var(--primary-color) !important; background: transparent; }
-  .p-tabview-panels { background: transparent; padding: 20px 0 0; border: none; }
+.p-tabs {
+  .p-tablist { background: transparent; border-color: var(--card-border); }
+  .p-tab { background: transparent; border: none; color: var(--text-color-secondary); font-weight: 500; }
+  .p-tab.p-tab-active { color: var(--primary-color); border-bottom-color: var(--primary-color) !important; background: transparent; }
+  .p-tabpanels { background: transparent; padding: 0; border: none; }
 }
 
 .p-progressbar { height: 8px; border-radius: 4px; background: rgba(255,255,255,.08); }

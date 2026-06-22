@@ -3,14 +3,14 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { TableModule } from 'primeng/table';
-import { DropdownModule } from 'primeng/dropdown';
+import { SelectModule } from 'primeng/select';
 import { ApiService } from '../../../services/api.service';
 import { LoginActivity } from '../../../models/api.models';
 
 @Component({
   selector: 'app-admin-activity',
   standalone: true,
-  imports: [CommonModule, DatePipe, FormsModule, TableModule, DropdownModule],
+  imports: [CommonModule, DatePipe, FormsModule, TableModule, SelectModule],
   template: `
     <div class="page-header">
       <h1 class="wt-section-title">Login Activity</h1>
@@ -22,8 +22,8 @@ import { LoginActivity } from '../../../models/api.models';
           <div class="d-flex align-items-center gap-2">
             <i class="pi pi-clock text-muted" style="font-size:14px"></i>
             <span class="text-muted" style="font-size:13px">Show last</span>
-            <p-dropdown [options]="limitOptions" [(ngModel)]="limit" optionLabel="label" optionValue="value"
-                        (ngModelChange)="load()" [style]="{width:'140px'}" />
+            <p-select [options]="limitOptions" [(ngModel)]="limit" optionLabel="label" optionValue="value"
+                      (ngModelChange)="load()" [style]="{width:'140px'}" />
           </div>
           <span *ngIf="activity.length" class="ms-auto text-muted" style="font-size:13px">{{ activity.length }} records</span>
         </div>
