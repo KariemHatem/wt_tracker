@@ -28,11 +28,13 @@ app.use(
       },
       err(err) {
         return {
-          type: err.type,
           message: err.message,
-          stack: err.stack,
-          cause: err.cause
-            ? { message: err.cause.message, code: err.cause.code }
+          code: (err as any).code,
+          cause: (err as any).cause
+            ? {
+                message: (err as any).cause.message,
+                code: (err as any).cause.code,
+              }
             : undefined,
         };
       },
