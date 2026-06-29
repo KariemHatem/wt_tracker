@@ -26,6 +26,16 @@ app.use(
           statusCode: res.statusCode,
         };
       },
+      err(err) {
+        return {
+          type: err.type,
+          message: err.message,
+          stack: err.stack,
+          cause: err.cause
+            ? { message: err.cause.message, code: err.cause.code }
+            : undefined,
+        };
+      },
     },
   }),
 );
