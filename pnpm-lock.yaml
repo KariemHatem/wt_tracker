@@ -527,8 +527,8 @@ importers:
         specifier: ^0.31.10
         version: 0.31.10
       esbuild:
-        specifier: 0.28.1
-        version: 0.28.1
+        specifier: 0.27.3
+        version: 0.27.3
 
   scripts:
     devDependencies:
@@ -1405,12 +1405,6 @@ packages:
 
   '@esbuild/linux-x64@0.27.3':
     resolution: {integrity: sha512-Czi8yzXUWIQYAtL/2y6vogER8pvcsOsk5cpwL4Gk5nJqH5UZiVByIY8Eorm5R13gq+DQKYg0+JyQoytLQas4dA==}
-    engines: {node: '>=18'}
-    cpu: [x64]
-    os: [linux]
-
-  '@esbuild/linux-x64@0.28.1':
-    resolution: {integrity: sha512-u/anNYF2mmVOEDwLtnQ1wOr3EZ9sTNGLWrsYGYwHWzGA3Si84IOkHXlbWTD1NB+9/1lcnweYKO54uhxZydNzfA==}
     engines: {node: '>=18'}
     cpu: [x64]
     os: [linux]
@@ -3990,11 +3984,6 @@ packages:
 
   esbuild@0.27.3:
     resolution: {integrity: sha512-8VwMnyGCONIs6cWue2IdpHxHnAjzxnw2Zr7MkVxB2vjmQ2ivqGFb4LEG3SMnv0Gb2F/G/2yA8zUaiL1gywDCCg==}
-    engines: {node: '>=18'}
-    hasBin: true
-
-  esbuild@0.28.1:
-    resolution: {integrity: sha512-HrJrvZv5ayxBzPfwphOoNzkzOIIlifzk0KJrGK2c8R4+LKpMtpYLQeUdjnwjWv/LZlkH2laZk+4w78pi99D4Vw==}
     engines: {node: '>=18'}
     hasBin: true
 
@@ -7559,9 +7548,6 @@ snapshots:
   '@esbuild/linux-x64@0.27.3':
     optional: true
 
-  '@esbuild/linux-x64@0.28.1':
-    optional: true
-
   '@esbuild/win32-x64@0.28.1': {}
 
   '@floating-ui/core@1.7.5':
@@ -10224,10 +10210,6 @@ snapshots:
   esbuild@0.27.3:
     optionalDependencies:
       '@esbuild/linux-x64': 0.27.3
-
-  esbuild@0.28.1:
-    optionalDependencies:
-      '@esbuild/linux-x64': 0.28.1
 
   escalade@3.2.0: {}
 
