@@ -17,7 +17,7 @@ export interface AuthRequest extends Request {
 }
 
 export function signToken(user: AuthUser): string {
-  return jwt.sign(user, JWT_SECRET, { expiresIn: "7d" });
+  return jwt.sign(user, JWT_SECRET, { expiresIn: "1d" });
 }
 
 export function requireAuth(req: AuthRequest, res: Response, next: NextFunction): void {
