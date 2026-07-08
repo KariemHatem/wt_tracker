@@ -15,6 +15,7 @@ export const loginActivityTable = pgTable("login_activity", {
   longitude: doublePrecision("longitude"),
   city: text("city"),
   country: text("country"),
+  address: text("address"),
 });
 
 export const insertLoginActivitySchema = createInsertSchema(loginActivityTable).omit({ id: true });
