@@ -30,6 +30,7 @@ router.get(
         longitude: loginActivityTable.longitude,
         city: loginActivityTable.city,
         country: loginActivityTable.country,
+        address: loginActivityTable.address,
       })
       .from(loginActivityTable)
       .leftJoin(usersTable, eq(loginActivityTable.userId, usersTable.id))
