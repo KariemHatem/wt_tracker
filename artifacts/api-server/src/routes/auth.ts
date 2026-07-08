@@ -38,6 +38,7 @@ async function resolveIpLocation(ip: string | null) {
     return null;
   }
 }
+
 async function reverseGeocode(lat: number, lng: number) {
   try {
     const { data } = await axios.get(`https://nominatim.openstreetmap.org/reverse`, {
@@ -62,7 +63,7 @@ async function reverseGeocode(lat: number, lng: number) {
 }
 
 router.post("/auth/login", async (req: AuthRequest, res): Promise<void> => {
-  const { email, password } = req.body;
+  const { email, password, latitude, longitude } = req.body;
   if (!email || !password) {
     res.status(400).json({ error: "Email and password required" });
     return;
@@ -106,6 +107,9 @@ router.post("/auth/login", async (req: AuthRequest, res): Promise<void> => {
     req.socket.remoteAddress ??
     null;
 
+  const hasGpsCoords =
+    typeof latitude === "number" && typeof longitude === "number";
+
   const [inserted] = await db
     .insert(loginActivityTable)
     .values({
@@ -120,22 +124,37 @@ router.post("/auth/login", async (req: AuthRequest, res): Promise<void> => {
           : /linux/i.test(ua)
             ? "Linux"
             : "Unknown",
+      latitude: hasGpsCoords ? latitude : null,
+      longitude: hasGpsCoords ? longitude : null,
     })
     .returning({ id: loginActivityTable.id });
 
-  resolveIpLocation(ip).then((loc) => {
-    if (loc && inserted?.id) {
-      db.update(loginActivityTable)
-        .set({
-          latitude: loc.latitude,
-          longitude: loc.longitude,
-          city: loc.city,
-          country: loc.country,
-        })
-        .where(eq(loginActivityTable.id, inserted.id))
-        .catch((err) => console.error("Failed to update location:", err));
-    }
-  });
+  if (hasGpsCoords) {
+    // Precise GPS coords from the browser — reverse geocode into a real address
+    reverseGeocode(latitude, longitude).then((loc) => {
+      if (loc && inserted?.id) {
+        db.update(loginActivityTable)
+          .set({ address: loc.address, city: loc.city, country: loc.country })
+          .where(eq(loginActivityTable.id, inserted.id))
+          .catch((err) => console.error("Failed to update address:", err));
+      }
+    });
+  } else {
+    // No GPS permission — fall back to IP-based city/country estimate
+    resolveIpLocation(ip).then((loc) => {
+      if (loc && inserted?.id) {
+        db.update(loginActivityTable)
+          .set({
+            latitude: loc.latitude,
+            longitude: loc.longitude,
+            city: loc.city,
+            country: loc.country,
+          })
+          .where(eq(loginActivityTable.id, inserted.id))
+          .catch((err) => console.error("Failed to update location:", err));
+      }
+    });
+  }
 
   const token = signToken({
     id: user.id,
