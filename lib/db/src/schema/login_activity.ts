@@ -11,6 +11,11 @@ export const loginActivityTable = pgTable("login_activity", {
   browser: text("browser"),
   operatingSystem: text("operating_system"),
   device: text("device"),
+
+  latitude: doublePrecision("latitude"),
+  longitude: doublePrecision("longitude"),
+  city: text("city"),
+  country: text("country"),
 });
 
 export const insertLoginActivitySchema = createInsertSchema(loginActivityTable).omit({ id: true });
