@@ -38,6 +38,28 @@ async function resolveIpLocation(ip: string | null) {
     return null;
   }
 }
+async function reverseGeocode(lat: number, lng: number) {
+  try {
+    const { data } = await axios.get(`https://nominatim.openstreetmap.org/reverse`, {
+      params: {
+        lat,
+        lon: lng,
+        format: "json",
+        "accept-language": "en",
+      },
+      headers: { "User-Agent": "WorkTracker/1.0 (admin@company.com)" },
+      timeout: 5000,
+    });
+    return {
+      address: data.display_name ?? null,
+      city: data.address?.city || data.address?.town || data.address?.village || null,
+      country: data.address?.country ?? null,
+    };
+  } catch (err: any) {
+    console.error("Reverse geocode failed:", err.message);
+    return null;
+  }
+}
 
 router.post("/auth/login", async (req: AuthRequest, res): Promise<void> => {
   const { email, password } = req.body;
