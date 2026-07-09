@@ -12,33 +12,6 @@ import {
 
 const router = Router();
 
-async function resolveIpLocation(ip: string | null) {
-  if (
-    !ip ||
-    ip === "127.0.0.1" ||
-    ip === "::1" ||
-    ip.startsWith("192.168.") ||
-    ip.startsWith("10.")
-  ) {
-    return null;
-  }
-  try {
-    const { data } = await axios.get(`https://ipapi.co/${ip}/json/`, {
-      timeout: 5000,
-    });
-    if (data.error) return null;
-    return {
-      latitude: data.latitude ?? null,
-      longitude: data.longitude ?? null,
-      city: data.city ?? null,
-      country: data.country_name ?? null,
-    };
-  } catch (err: any) {
-    console.error("IP geolocation failed:", err.message);
-    return null;
-  }
-}
-
 async function reverseGeocode(lat: number, lng: number) {
   try {
     const { data } = await axios.get(`https://nominatim.openstreetmap.org/reverse`, {
@@ -139,22 +112,9 @@ router.post("/auth/login", async (req: AuthRequest, res): Promise<void> => {
           .catch((err) => console.error("Failed to update address:", err));
       }
     });
-  } else {
-    // No GPS permission — fall back to IP-based city/country estimate
-    resolveIpLocation(ip).then((loc) => {
-      if (loc && inserted?.id) {
-        db.update(loginActivityTable)
-          .set({
-            latitude: loc.latitude,
-            longitude: loc.longitude,
-            city: loc.city,
-            country: loc.country,
-          })
-          .where(eq(loginActivityTable.id, inserted.id))
-          .catch((err) => console.error("Failed to update location:", err));
-      }
-    });
   }
+  // If GPS wasn't granted, latitude/longitude/city/country/address all stay null —
+  // no IP fallback, so the table can show "Location not shared" instead of a wrong city.
 
   const token = signToken({
     id: user.id,
