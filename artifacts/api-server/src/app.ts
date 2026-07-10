@@ -46,6 +46,7 @@ app.use(
    origin: [
       "http://localhost:4200",
       "https://wtracker-9qtkuoabk-kariem-hatems-projects.vercel.app",
+      "https://wtracker-pearl.vercel.app",
     ],
     credentials: true,
   }),
