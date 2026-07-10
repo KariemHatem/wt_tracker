@@ -45,7 +45,7 @@ app.use(
   cors({
    origin: [
       "http://localhost:4200",
-      "https://wtracker-pearl.vercel.app/",
+      "https://wtracker-9qtkuoabk-kariem-hatems-projects.vercel.app",
     ],
     credentials: true,
   }),
