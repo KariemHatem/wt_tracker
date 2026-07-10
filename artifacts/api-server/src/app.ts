@@ -43,7 +43,10 @@ app.use(
 );
 app.use(
   cors({
-    origin: "http://localhost:4200",
+   origin: [
+      "http://localhost:4200",
+      "https://wtracker-pearl.vercel.app/",
+    ],
     credentials: true,
   }),
 );
